@@ -1,4 +1,4 @@
-package com.sunkit;
+package com.sunkit.lox;
 
 enum TokenType {
     // Single-character tokens.

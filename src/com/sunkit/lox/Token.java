@@ -1,4 +1,4 @@
-package com.sunkit;
+package com.sunkit.lox;
 
 public class Token {
     final TokenType type;

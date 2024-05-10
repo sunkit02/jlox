@@ -1,4 +1,4 @@
-package com.sunkit;
+package com.sunkit.lox;
 
 import java.util.ArrayList;
 import java.util.HashMap;
