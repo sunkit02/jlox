@@ -1,7 +1,11 @@
-package com.sunkit.lox;
+package com.sunkit.tool;
+
+import com.sunkit.lox.Expr;
+import com.sunkit.lox.Token;
+import com.sunkit.lox.TokenType;
 
 public class AstPrinter implements Expr.Visitor<String> {
-    String print(Expr expr) {
+    public String print(Expr expr) {
         return expr.accept(this);
     }
 
