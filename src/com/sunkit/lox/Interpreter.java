@@ -41,6 +41,12 @@ public class Interpreter implements Expr.Visitor<Object> {
                     return (String) left + (String) right;
                 }
 
+                // Challenge 7.2: Concatenating strings and numbers in lox
+                // NOTE: This will also allow functions and classes to be concatenated with strings
+                if (left instanceof String || right instanceof String) {
+                    return stringify(left) + stringify(right);
+                }
+
                 throw new LoxRuntimeError(expr.operator, "Operands must be two numbers or two strings.");
             case SLASH:
                 checkNumberOperands(expr.operator, left, right);
