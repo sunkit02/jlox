@@ -77,16 +77,16 @@ public class Interpreter implements Expr.Visitor<Object> {
     public Object visitUnaryExpr(Expr.Unary expr) {
         Object right = evaluate(expr.right);
 
-        switch (expr.operator.type) {
-            case BANG:
-                return !isTruthy(right);
-            case MINUS:
+        return switch (expr.operator.type) {
+            case BANG -> !isTruthy(right);
+            case MINUS -> {
                 checkNumberOperand(expr.operator, right);
-                return -((double) right);
-        }
+                yield -((double) right);
+            }
 
-        // Unreachable
-        return null;
+            // Unreachable
+            default -> null;
+        };
     }
 
     private Object evaluate(Expr expr) {
