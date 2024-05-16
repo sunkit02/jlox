@@ -52,7 +52,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
                     return stringify(left) + stringify(right);
                 }
 
-                throw new LoxRuntimeError(expr.operator, "Operands must be two numbers or two strings.");
+                throw new LoxRuntimeError(expr.operator, "Operands must be two numbers or two concatenable types (a string and a number, etc.).");
             case SLASH:
                 checkNumberOperands(expr.operator, left, right);
                 return (double) left / (double) right;
@@ -149,7 +149,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         return left.equals(right);
     }
 
-    private String stringify(Object object) {
+    public String stringify(Object object) {
         if (object == null) return "nil";
         if (object instanceof Double) {
             String text = object.toString();
@@ -170,12 +170,12 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     private void checkNumberOperands(Token operator, Object... operands) {
         for (Object operand : operands) {
             if (!(operand instanceof Double)) {
-                throw new LoxRuntimeError(operator, "Operands must be a numbers.");
+                throw new LoxRuntimeError(operator, "Operands must be numbers.");
             }
         }
     }
 
-    private Object evaluate(Expr expr) {
+    public Object evaluate(Expr expr) {
         return expr.accept(this);
     }
 

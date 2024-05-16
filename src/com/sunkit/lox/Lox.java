@@ -7,11 +7,17 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 
 public class Lox {
     private static final Interpreter interpreter = new Interpreter();
     private static boolean hadError = false;
     private static boolean hadRuntimeError = false;
+
+    /**
+     * Determine whether to output error messages to `stderr`
+     */
+    private static boolean reportError = true;
 
     public static void main(String[] args) throws IOException {
         if (args.length > 1) {
@@ -41,12 +47,42 @@ public class Lox {
             System.out.print("> ");
             String line = reader.readLine();
             if (line == null) break;
-            run(line);
+            runInteractive(line);
             // Reset error so not to kill the interactive prompt on error
             hadError = false;
             hadRuntimeError = false;
         }
     }
+
+    private static void runInteractive(String src) {
+        // Temporarily stop error reporting since we parse the user input
+        // as an expression unchecked, and it could be a statement or malformed
+        // input.
+        reportError = false;
+
+        Scanner scanner = new Scanner(src);
+        List<Token> tokens = scanner.scanTokens();
+        Parser parser = new Parser(tokens);
+        Optional<Expr> expr = parser.tryParseExpression();
+
+        if (expr.isEmpty()) {
+            // Turn on error reporting for statement parsing to catch all the remaining
+            // errors. This will catch all errors since statement parsing is implemented
+            // as a superset of expression parsing.
+            reportError = true;
+            hadError = false;
+            run(src);
+            return;
+        }
+
+        try {
+            Object value = interpreter.evaluate(expr.get());
+            System.out.println(interpreter.stringify(value));
+        } catch (LoxRuntimeError error) {
+            System.err.println(error.getMessage());
+        }
+    }
+
 
     private static void run(String src) {
         Scanner scanner = new Scanner(src);
@@ -73,7 +109,10 @@ public class Lox {
     }
 
     private static void report(int line, String where, String message) {
-        System.err.printf("[line %d] Error%s: %s%n", line, where, message);
+        // Only report error when `reportError` flag is on
+        if (reportError) {
+            System.err.printf("[line %d] Error%s: %s%n", line, where, message);
+        }
         hadError = true;
     }
 

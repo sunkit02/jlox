@@ -2,6 +2,7 @@ package com.sunkit.lox;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.sunkit.lox.TokenType.*;
 
@@ -22,6 +23,25 @@ public class Parser {
         }
 
         return statements;
+    }
+
+    /**
+        Tries to parse an expression based on the input and returns it.
+         Resets the parser state to the beginning regardless of the operation status.
+     */
+    public Optional<Expr> tryParseExpression() {
+        Optional<Expr> expr;
+
+        try {
+            expr = Optional.of(expression());
+        } catch (ParseError error) {
+            expr = Optional.empty();
+        } finally {
+            // Reset the parser state to the beginning
+            current = 0;
+        }
+
+        return expr;
     }
 
     private Stmt declaration() {
