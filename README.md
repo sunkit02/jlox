@@ -1,7 +1,7 @@
 # JLox
 
 An implementation of the Lox programming language base on
-Robert Nystrom's book [Crafting Interpreters](https://craftinginterpreters.com).
+Robert Nystrom's book [Crafting Interpreters](https://craftinginterpreters.com) in Java.
 
 ## Chapters Completed
 
