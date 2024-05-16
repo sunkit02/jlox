@@ -18,4 +18,12 @@ public class Environment {
         throw new LoxRuntimeError(name, String.format("Undefined variable '%s'.", name.lexeme));
     }
 
+    public void assign(Token name, Object value) {
+        if (values.containsKey(name.lexeme)) {
+            values.put(name.lexeme, value);
+            return;
+        }
+
+        throw new LoxRuntimeError(name, String.format("Undefined variable '%s'.", name.lexeme));
+    }
 }

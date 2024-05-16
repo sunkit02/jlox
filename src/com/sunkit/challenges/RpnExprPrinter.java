@@ -15,6 +15,11 @@ public class RpnExprPrinter implements Expr.Visitor<String> {
     }
 
     @Override
+    public String visitAssignExpr(Expr.Assign expr) {
+        return String.format("(Assign %s to %s)", expr.value.accept(this), expr.name.lexeme);
+    }
+
+    @Override
     public String visitBinaryExpr(Expr.Binary expr) {
         String left = expr.left.accept(this);
         String right = expr.right.accept(this);
