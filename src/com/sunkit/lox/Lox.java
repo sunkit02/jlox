@@ -32,7 +32,8 @@ public class Lox {
 
     private static void runFile(String file) throws IOException {
         byte[] bytes = Files.readAllBytes(Paths.get(file));
-        run(new String(bytes, Charset.defaultCharset()));
+        List<Token> tokens = tokenize(new String(bytes, Charset.defaultCharset()));
+        run(tokens);
 
         // Indicate an error in the exit code
         if (hadError) System.exit(65);
@@ -54,15 +55,21 @@ public class Lox {
         }
     }
 
+    /**
+     * Used to run source code input from REPL (interactive) mode. First evaluates the input as an expression then tries to run
+     * as statements when the expression evaluation fails. Parsing errors in the initial expression evaluation
+     * phase will not be reported to users.
+     * @param src Source code input as a String
+     */
     private static void runInteractive(String src) {
         // Temporarily stop error reporting since we parse the user input
         // as an expression unchecked, and it could be a statement or malformed
         // input.
         reportError = false;
 
-        Scanner scanner = new Scanner(src);
-        List<Token> tokens = scanner.scanTokens();
+        List<Token> tokens = tokenize(src);
         Parser parser = new Parser(tokens);
+
         Optional<Expr> expr = parser.tryParseExpression();
 
         if (expr.isEmpty()) {
@@ -70,8 +77,12 @@ public class Lox {
             // errors. This will catch all errors since statement parsing is implemented
             // as a superset of expression parsing.
             reportError = true;
+
+            // Reset parsing error states to enter statement parsing in a clean slate
             hadError = false;
-            run(src);
+
+            // Pass the tokens to the run() method where statements are expected
+            run(tokens);
             return;
         }
 
@@ -83,10 +94,12 @@ public class Lox {
         }
     }
 
+    private static List<Token> tokenize(String src) {
+        return new Scanner(src).scanTokens();
+    }
 
-    private static void run(String src) {
-        Scanner scanner = new Scanner(src);
-        List<Token> tokens = scanner.scanTokens();
+
+    private static void run(List<Token> tokens) {
         Parser parser = new Parser(tokens);
         List<Stmt> statements = parser.parse();
 
