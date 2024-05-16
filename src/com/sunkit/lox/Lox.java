@@ -61,6 +61,7 @@ public class Lox {
      * phase will not be reported to users.
      * @param src Source code input as a String
      */
+    // Implement direct expression evaluation in REPL mode (challenge 8.1)
     private static void runInteractive(String src) {
         // Temporarily stop error reporting since we parse the user input
         // as an expression unchecked, and it could be a statement or malformed
