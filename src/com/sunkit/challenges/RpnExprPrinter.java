@@ -36,6 +36,11 @@ public class RpnExprPrinter implements Expr.Visitor<String> {
         return expr.operator.lexeme + expr.right;
     }
 
+    @Override
+    public String visitVariableExpr(Expr.Variable expr) {
+        return expr.name.lexeme;
+    }
+
     public static void main(String[] args) {
         // Expr representation of: (1 + 2) * (4 - 3)
         Expr expr = new Expr.Binary(

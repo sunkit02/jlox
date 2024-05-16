@@ -55,6 +55,12 @@ binary      -> expression operator expression ;
 
 operator    -> "==" | "!=" | "<" | "<=" | ">" | ">="
              | "+"  | "-"  | "*" | "/" ;
+
+# For variable access
+primary     -> "true" | "false | "nil" 
+             | NUMBER | STRING
+             | "(" expression ")"
+             | IDENTIFIER ;
 ```
 
 Statements
