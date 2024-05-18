@@ -29,6 +29,7 @@ public class Parser {
         Tries to parse an expression based on the input and returns it.
          Resets the parser state to the beginning regardless of the operation status.
      */
+    // TODO: Fix allowing invalid characters trailing a valid expression
     public Optional<Expr> tryParseExpression() {
         Optional<Expr> expr;
 
