@@ -5,6 +5,17 @@ import com.sunkit.lox.Token;
 import com.sunkit.lox.TokenType;
 
 public class AstPrinter implements Expr.Visitor<String> {
+    public static void main(String[] args) {
+        Expr expr = new Expr.Binary(
+                new Expr.Unary(
+                        new Token(TokenType.MINUS, "-", null, 1),
+                        new Expr.Literal(123)),
+                new Token(TokenType.STAR, "*", null, 1),
+                new Expr.Grouping(new Expr.Literal(45.67)));
+
+        System.out.println(new AstPrinter().print(expr));
+    }
+
     public String print(Expr expr) {
         return expr.accept(this);
     }
@@ -16,7 +27,7 @@ public class AstPrinter implements Expr.Visitor<String> {
 
     @Override
     public String visitBinaryExpr(Expr.Binary expr) {
-        return parenthesize(expr.operator.lexeme, expr.left,expr.right);
+        return parenthesize(expr.operator.lexeme, expr.left, expr.right);
     }
 
     @Override
@@ -27,6 +38,13 @@ public class AstPrinter implements Expr.Visitor<String> {
     @Override
     public String visitLiteralExpr(Expr.Literal expr) {
         return expr.value == null ? "nil" : expr.value.toString();
+    }
+
+    @Override
+    public String visitLogicalExpr(Expr.Logical expr) {
+        String left = expr.left.accept(this);
+        String right = expr.right.accept(this);
+        return left + " " + expr.operator.lexeme + " " + right;
     }
 
     @Override
@@ -50,16 +68,5 @@ public class AstPrinter implements Expr.Visitor<String> {
         builder.append(")");
 
         return builder.toString();
-    }
-
-    public static void main(String[] args) {
-        Expr expr = new Expr.Binary(
-                new Expr.Unary(
-                        new Token(TokenType.MINUS, "-", null, 1),
-                        new Expr.Literal(123)),
-                new Token(TokenType.STAR, "*", null, 1),
-                new Expr.Grouping(new Expr.Literal(45.67)));
-
-        System.out.println(new AstPrinter().print(expr));
     }
 }
