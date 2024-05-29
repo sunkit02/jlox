@@ -1,0 +1,14 @@
+var i = 0;
+while (i < 10) {
+    if (i == 5) {
+        print "Breaking on condition 'i == " + i + "'";
+        break;
+    }
+    if (i == 1) {
+        print "Skipping rest of current iteration on condition 'i == " + i + "'";
+        i = i + 1;
+        continue;
+    }
+    print i;
+    i = i + 1;
+}

@@ -1,9 +1,6 @@
 package com.sunkit.lox;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.sunkit.lox.TokenType.*;
 
@@ -74,8 +71,15 @@ public class Parser {
         if (match(PRINT)) return printStatement();
         if (match(WHILE)) return whileStatement();
         if (match(LEFT_BRACE)) return new Stmt.Block(block());
+        if (match(BREAK, CONTINUE)) return loopControlStatement();
 
         return expressionStatement();
+    }
+
+    private Stmt loopControlStatement() {
+        Token keyword = previous();
+        consume(SEMICOLON, "Expect ';' after loop control statement.");
+        return new Stmt.LoopControl(keyword);
     }
 
     private Stmt forStatement() {
@@ -102,13 +106,11 @@ public class Parser {
         }
         consume(RIGHT_PAREN, "Expect ')' after for clauses.");
 
-        Stmt body = statement();
+        Stmt body = loopBody();
 
+        // Insert increment at the end of the loop body
         if (increment != null) {
-            body = new Stmt.Block(
-                    Arrays.asList(
-                            body,
-                            new Stmt.Expression(increment)));
+            ((Stmt.LoopBody) body).statements.add(new Stmt.Expression(increment));
         }
 
         if (condition == null) condition = new Expr.Literal(true);
@@ -146,7 +148,7 @@ public class Parser {
         Expr condition = expression();
         consume(RIGHT_PAREN, "Expect ')' after condition.");
 
-        Stmt body = statement();
+        Stmt body = loopBody();
 
         return new Stmt.While(condition, body);
     }
@@ -166,6 +168,16 @@ public class Parser {
 
         consume(RIGHT_BRACE, "Expect '}' after block.");
         return statements;
+    }
+
+    private Stmt loopBody() {
+        List<Stmt> body;
+        if (match(LEFT_BRACE)) {
+            body = block();
+        } else {
+            body = Collections.singletonList(statement());
+        }
+        return new Stmt.LoopBody(body);
     }
 
     private Expr expression() {

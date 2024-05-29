@@ -5,6 +5,8 @@ import java.util.List;
 public abstract class Stmt {
   public interface Visitor<R> {
     R visitBlockStmt(Block stmt);
+    R visitLoopBodyStmt(LoopBody stmt);
+    R visitLoopControlStmt(LoopControl stmt);
     R visitExpressionStmt(Expression stmt);
     R visitIfStmt(If stmt);
     R visitPrintStmt(Print stmt);
@@ -22,6 +24,30 @@ public abstract class Stmt {
     }
 
     public final List<Stmt> statements;
+  }
+  public static class LoopBody extends Stmt {
+    public LoopBody(List<Stmt> statements) {
+        this.statements = statements;
+    }
+
+    @Override
+    public <R> R accept(Visitor<R> visitor) {
+      return visitor.visitLoopBodyStmt(this);
+    }
+
+    public final List<Stmt> statements;
+  }
+  public static class LoopControl extends Stmt {
+    public LoopControl(Token keyword) {
+        this.keyword = keyword;
+    }
+
+    @Override
+    public <R> R accept(Visitor<R> visitor) {
+      return visitor.visitLoopControlStmt(this);
+    }
+
+    public final Token keyword;
   }
   public static class Expression extends Stmt {
     public Expression(Expr expression) {

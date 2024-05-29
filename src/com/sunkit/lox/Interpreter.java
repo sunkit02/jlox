@@ -10,6 +10,8 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
             for (Stmt statement : statements) {
                 execute(statement);
             }
+        } catch (LoopControlException error) {
+            Lox.runtimeError(new LoxRuntimeError(error.keyword, "'break' or 'continue' outside of a loop."));
         } catch (LoxRuntimeError error) {
             Lox.runtimeError(error);
         }
@@ -119,6 +121,17 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     }
 
     @Override
+    public Void visitLoopBodyStmt(Stmt.LoopBody stmt) {
+        executeLoopBody(stmt.statements, new Environment(environment));
+        return null;
+    }
+
+    @Override
+    public Void visitLoopControlStmt(Stmt.LoopControl stmt) {
+        throw new LoopControlException(stmt.keyword);
+    }
+
+    @Override
     public Void visitExpressionStmt(Stmt.Expression stmt) {
         evaluate(stmt.expression);
         return null;
@@ -154,8 +167,22 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
     @Override
     public Void visitWhileStmt(Stmt.While stmt) {
+        loop:
         while (isTruthy(evaluate(stmt.condition))) {
-            execute(stmt.body);
+            try {
+                execute(stmt.body);
+            } catch (LoopControlException e) {
+                switch (e.keyword.type) {
+                    case BREAK:
+                        break loop;
+                    case CONTINUE:
+                        continue;
+                    default:
+                        // Unreachable
+                        System.exit(64);
+                }
+
+            }
         }
         return null;
     }
@@ -215,6 +242,19 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     }
 
     private void executeBlock(List<Stmt> statements, Environment environment) {
+        Environment previous = this.environment;
+        try {
+            this.environment = environment;
+
+            for (Stmt statement : statements) {
+                execute(statement);
+            }
+        } finally {
+            this.environment = previous;
+        }
+    }
+
+    private void executeLoopBody(List<Stmt> statements, Environment environment) {
         Environment previous = this.environment;
         try {
             this.environment = environment;
