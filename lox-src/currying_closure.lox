@@ -27,3 +27,20 @@ sunkitGreeter("Sunday");
 var euniceGreeter = makeGreeter("Eunice");
 euniceGreeter("Tuesday");
 euniceGreeter("Thursday");
+
+var a = 1;
+
+fun incrementABy(num) {
+    fun incrementA() {
+        a = a + num;
+        return a;
+    }
+
+    return incrementA;
+}
+
+var incrementAByOne = incrementABy(1);
+
+print incrementAByOne(); // Expect: 2
+a = 10;
+print incrementAByOne(); // My impl expect: 3, book impl expect: 11
