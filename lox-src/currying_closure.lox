@@ -1,0 +1,29 @@
+fun makeCounter() {
+  var i = 0;
+  fun count() {
+    i = i + 1;
+    print i;
+  }
+
+  return count;
+}
+
+var counter = makeCounter();
+counter(); // "1".
+counter(); // "2".
+
+fun makeGreeter(name) {
+    fun greet(day) {
+        print "Hello, " + name + "! What a nice " + day + "!";
+    }
+
+    return greet;
+}
+
+var sunkitGreeter = makeGreeter("Sun Kit");
+sunkitGreeter("Friday");
+sunkitGreeter("Sunday");
+
+var euniceGreeter = makeGreeter("Eunice");
+euniceGreeter("Tuesday");
+euniceGreeter("Thursday");

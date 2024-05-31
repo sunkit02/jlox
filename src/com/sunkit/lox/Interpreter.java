@@ -183,7 +183,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
     @Override
     public Void visitFunctionStmt(Stmt.Function stmt) {
-        LoxFunction function = new LoxFunction(stmt);
+        LoxFunction function = new LoxFunction(stmt, captureClosure(stmt.params, stmt.body));
         environment.define(stmt.name.lexeme, function);
         return null;
     }
@@ -324,6 +324,10 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         } finally {
             this.environment = previous;
         }
+    }
+
+    private Environment captureClosure(List<Token> params, List<Stmt> body) {
+        return new ClosureCapturer().capture(params, body, this.environment);
     }
 
     public Environment getGlobals() {

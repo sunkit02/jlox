@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Environment {
-    private final Environment enclosing;
+    private Environment enclosing;
     private final Map<String, Object> values = new HashMap<>();
 
     Environment() {
@@ -41,5 +41,13 @@ public class Environment {
         }
 
         throw new LoxRuntimeError(name, String.format("Undefined variable '%s'.", name.lexeme));
+    }
+
+    public Environment getEnclosing() {
+        return enclosing;
+    }
+
+    public void setEnclosing(Environment enclosing) {
+        this.enclosing = enclosing;
     }
 }
