@@ -19,6 +19,24 @@ public class Environment {
         values.put(name, value);
     }
 
+    Environment ancestor(int distance) {
+        Environment environment = this;
+        for (int i = 0; i < distance; i++) {
+            assert environment != null;
+            environment = environment.enclosing;
+        }
+
+        return environment;
+    }
+
+    public Object getAt(int distance, String name) {
+        return ancestor(distance).values.get(name);
+    }
+
+    public void assignAt(int distance, Token name, Object value) {
+        ancestor(distance).values.put(name.lexeme, value);
+    }
+
     public Object get(Token name) {
         if (values.containsKey(name.lexeme)) {
             return values.get(name.lexeme);
@@ -42,4 +60,5 @@ public class Environment {
 
         throw new LoxRuntimeError(name, String.format("Undefined variable '%s'.", name.lexeme));
     }
+
 }

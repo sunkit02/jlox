@@ -110,7 +110,7 @@ public abstract class Stmt {
   public static class Return extends Stmt {
     public Return(Token keyword, Expr expr) {
         this.keyword = keyword;
-        this.expr = expr;
+        this.value = expr;
     }
 
     @Override
@@ -119,7 +119,7 @@ public abstract class Stmt {
     }
 
     public final Token keyword;
-    public final Expr expr;
+    public final Expr value;
   }
   public static class Var extends Stmt {
     public Var(Token name, Expr initializer) {
