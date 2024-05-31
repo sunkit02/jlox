@@ -20,6 +20,16 @@ public class RpnExprPrinter implements Expr.Visitor<String> {
     }
 
     @Override
+    public String visitCallExpr(Expr.Call expr) {
+        return String.format(
+                "(Call %s with args %s)",
+                expr.callee.accept(this),
+                expr.arguments.stream()
+                        .map((e) -> e.accept(this))
+                        .toList());
+    }
+
+    @Override
     public String visitBinaryExpr(Expr.Binary expr) {
         String left = expr.left.accept(this);
         String right = expr.right.accept(this);

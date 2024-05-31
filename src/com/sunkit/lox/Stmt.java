@@ -8,8 +8,10 @@ public abstract class Stmt {
     R visitLoopBodyStmt(LoopBody stmt);
     R visitLoopControlStmt(LoopControl stmt);
     R visitExpressionStmt(Expression stmt);
+    R visitFunctionStmt(Function stmt);
     R visitIfStmt(If stmt);
     R visitPrintStmt(Print stmt);
+    R visitReturnStmt(Return stmt);
     R visitVarStmt(Var stmt);
     R visitWhileStmt(While stmt);
   }
@@ -61,6 +63,22 @@ public abstract class Stmt {
 
     public final Expr expression;
   }
+  public static class Function extends Stmt {
+    public Function(Token name, List<Token> params, List<Stmt> body) {
+        this.name = name;
+        this.params = params;
+        this.body = body;
+    }
+
+    @Override
+    public <R> R accept(Visitor<R> visitor) {
+      return visitor.visitFunctionStmt(this);
+    }
+
+    public final Token name;
+    public final List<Token> params;
+    public final List<Stmt> body;
+  }
   public static class If extends Stmt {
     public If(Expr condition, Stmt thenBranch, Stmt elseBranch) {
         this.condition = condition;
@@ -88,6 +106,20 @@ public abstract class Stmt {
     }
 
     public final Expr expression;
+  }
+  public static class Return extends Stmt {
+    public Return(Token keyword, Expr expr) {
+        this.keyword = keyword;
+        this.expr = expr;
+    }
+
+    @Override
+    public <R> R accept(Visitor<R> visitor) {
+      return visitor.visitReturnStmt(this);
+    }
+
+    public final Token keyword;
+    public final Expr expr;
   }
   public static class Var extends Stmt {
     public Var(Token name, Expr initializer) {
