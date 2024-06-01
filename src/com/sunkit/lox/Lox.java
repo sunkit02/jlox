@@ -26,7 +26,7 @@ public class Lox {
         } else if (args.length == 1 ) {
             runFile(args[0]);
         } else {
-            runPrompt();
+            handleStdin();
         }
     }
 
@@ -38,6 +38,21 @@ public class Lox {
         // Indicate an error in the exit code
         if (hadError) System.exit(65);
         if (hadRuntimeError) System.exit(70);
+    }
+
+    private static void handleStdin() throws IOException {
+        InputStreamReader input = new InputStreamReader(System.in);
+        StringBuilder source = new StringBuilder();
+        while (input.ready()) {
+            source.append((char) input.read());
+        }
+
+        if (!source.isEmpty()) {
+            List<Token> tokens = new Scanner(source.toString()).scanTokens();
+            run(tokens);
+        } else {
+            runPrompt();
+        }
     }
 
     private static void runPrompt() throws IOException {
