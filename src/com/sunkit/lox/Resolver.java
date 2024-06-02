@@ -1,13 +1,11 @@
 package com.sunkit.lox;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     private final Interpreter interpreter;
     private final Stack<Map<String, Boolean>> scopes = new Stack<>();
+    private final Set<String> usedLocals = new HashSet<>();
     private FunctionType currentFunction = FunctionType.NONE;
 
     Resolver(Interpreter interpreter) {
@@ -33,7 +31,29 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     }
 
     private void endScope() {
-        scopes.pop();
+        Map<String, Boolean> scope = scopes.pop();
+        Set<String> localVariables = scope.keySet();
+        List<String> unusedLocals = localVariables
+                .stream()
+                .filter(variable -> !usedLocals.contains(variable))
+                .toList();
+
+        if (!unusedLocals.isEmpty()) {
+            String s = unusedLocals.toString()
+                    .replace("[", "")
+                    .replace("]", "");
+            Lox.error(0, "Unused local variables: " + s);
+        }
+
+        // Remove all variables declared in the current scope
+        List<String> localsOutOfScope = usedLocals
+                .stream()
+                .filter(scope::containsKey)
+                .toList();
+
+        for (String local : localsOutOfScope) {
+            usedLocals.remove(local);
+        }
     }
 
     private void declare(Token name) {
@@ -111,6 +131,9 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         if (!scopes.isEmpty() && scopes.peek().get(expr.name.lexeme) == Boolean.FALSE) {
             Lox.error(expr.name, "Can't read local variable in its own initializer.");
         }
+
+        // Mark variable as used
+        usedLocals.add(expr.name.lexeme);
 
         resolveLocal(expr, expr.name);
         return null;

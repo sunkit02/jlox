@@ -205,7 +205,7 @@ public class Parser {
         if (match(LEFT_BRACE)) {
             body = block();
         } else {
-            body = Collections.singletonList(statement());
+            body = new ArrayList<>(List.of(statement()));
         }
         return new Stmt.LoopBody(body);
     }
