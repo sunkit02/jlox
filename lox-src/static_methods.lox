@@ -1,17 +1,17 @@
 class Math {
-    class square(n) {
+    static square(n) {
         return n * n;
     }
 
     // n % m
-    class mod(n, m) {
+    static mod(n, m) {
         while (n > m) {
             n = n - m;
         }
         return n;
     }
 
-    class abs(n) {
+    static abs(n) {
         if (n < 0) return -n;
         return n;
     }

@@ -60,7 +60,7 @@ public class Parser {
 
         List<Stmt.Function> methods = new ArrayList<>();
         while (!check(RIGHT_BRACE) && !isAtEnd()) {
-            if (match(CLASS)) {
+            if (match(STATIC)) {
                 methods.add(function("static method"));
             } else {
                 methods.add(function("method"));
