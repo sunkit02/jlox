@@ -11,7 +11,7 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
 
     private enum FunctionType {
         NONE,
-        Function,
+        FUNCTION,
         INITIALIZER,
         METHOD,
     }
@@ -114,6 +114,9 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
                     ? FunctionType.INITIALIZER
                     : FunctionType.METHOD;
 
+            // Check if the method is static (reuse FunctionType.FUNCTION since the semantics are the same)
+            declaration = method.isStaticMethod ? FunctionType.FUNCTION : declaration;
+
             resolveFunction(method, declaration);
         }
 
@@ -168,7 +171,7 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         declare(stmt.name);
         define(stmt.name);
 
-        resolveFunction(stmt, FunctionType.Function);
+        resolveFunction(stmt, FunctionType.FUNCTION);
         return null;
     }
 
@@ -249,8 +252,13 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
 
     @Override
     public Void visitThisExpr(Expr.This expr) {
-        if (currentClass == ClassType.NONE) {
-            Lox.error(expr.keyword, "Can't use 'this' outside of a class.");
+        if (currentClass == ClassType.NONE || currentFunction == FunctionType.FUNCTION) {
+            String message = "Can't use 'this' outside of a class.";
+            // Custom message specifically for using `this` in static methods
+            if (currentClass != ClassType.NONE) {
+                message = "Can't use 'this' in a static method.";
+            }
+            Lox.error(expr.keyword, message);
             return null;
         }
 

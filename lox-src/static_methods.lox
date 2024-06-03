@@ -1,0 +1,23 @@
+class Math {
+    class square(n) {
+        return n * n;
+    }
+
+    // n % m
+    class mod(n, m) {
+        while (n > m) {
+            n = n - m;
+        }
+        return n;
+    }
+
+    class abs(n) {
+        if (n < 0) return -n;
+        return n;
+    }
+}
+
+print Math.square(2);
+print Math.abs(-100);
+print Math.abs(100);
+print Math.mod(7, 2);

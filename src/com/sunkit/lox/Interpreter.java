@@ -209,12 +209,23 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         environment.define(stmt.name.lexeme, null);
 
         Map<String, LoxFunction> methods = new HashMap<>();
+        Map<String, LoxFunction> staticMethods = new HashMap<>();
         for (Stmt.Function method : stmt.methods) {
             LoxFunction function = new LoxFunction(method, environment);
-            methods.put(method.name.lexeme, function);
+            if (method.isStaticMethod) {
+                staticMethods.put(method.name.lexeme, function);
+            } else {
+                methods.put(method.name.lexeme, function);
+            }
         }
 
         LoxClass loxClass = new LoxClass(stmt.name.lexeme, methods);
+
+        // Assign static methods as fields instead of methods to avoid the binding to `this` issue
+        for (LoxFunction method : staticMethods.values()) {
+            loxClass.set(method.getDeclaration().name, method);
+        }
+
         environment.assign(stmt.name, loxClass);
         return null;
     }

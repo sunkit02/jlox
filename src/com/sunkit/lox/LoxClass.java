@@ -3,11 +3,12 @@ package com.sunkit.lox;
 import java.util.List;
 import java.util.Map;
 
-public class LoxClass implements LoxCallable {
+public class LoxClass extends LoxInstance implements LoxCallable {
     private final String name;
     private final Map<String, LoxFunction> methods;
 
     LoxClass(String name, Map<String, LoxFunction> methods) {
+        super(null);
         this.name = name;
         this.methods = methods;
     }
@@ -18,6 +19,16 @@ public class LoxClass implements LoxCallable {
 
     public LoxFunction findMethod(String name) {
         return methods.get(name);
+    }
+
+    public LoxFunction findStaticMethod(Token name) {
+        Object value = super.get(name);
+        if (!(value instanceof LoxFunction method)) {
+            Lox.error(name, "Can only call static methods on a Class.");
+            return null;
+        }
+
+        return method;
     }
 
     @Override
