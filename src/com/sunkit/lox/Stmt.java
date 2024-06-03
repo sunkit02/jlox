@@ -5,6 +5,7 @@ import java.util.List;
 public abstract class Stmt {
   public interface Visitor<R> {
     R visitBlockStmt(Block stmt);
+    R visitClassStmt(Class stmt);
     R visitLoopBodyStmt(LoopBody stmt);
     R visitLoopControlStmt(LoopControl stmt);
     R visitExpressionStmt(Expression stmt);
@@ -26,6 +27,20 @@ public abstract class Stmt {
     }
 
     public final List<Stmt> statements;
+  }
+  public static class Class extends Stmt {
+    public Class(Token name, List<Stmt.Function> methods) {
+        this.name = name;
+        this.methods = methods;
+    }
+
+    @Override
+    public <R> R accept(Visitor<R> visitor) {
+      return visitor.visitClassStmt(this);
+    }
+
+    public final Token name;
+    public final List<Stmt.Function> methods;
   }
   public static class LoopBody extends Stmt {
     public LoopBody(List<Stmt> statements) {
@@ -108,9 +123,9 @@ public abstract class Stmt {
     public final Expr expression;
   }
   public static class Return extends Stmt {
-    public Return(Token keyword, Expr expr) {
+    public Return(Token keyword, Expr value) {
         this.keyword = keyword;
-        this.value = expr;
+        this.value = value;
     }
 
     @Override

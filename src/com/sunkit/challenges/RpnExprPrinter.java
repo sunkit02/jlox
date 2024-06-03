@@ -30,6 +30,16 @@ public class RpnExprPrinter implements Expr.Visitor<String> {
     }
 
     @Override
+    public String visitGetExpr(Expr.Get expr) {
+        return String.format("Get %s from %s", expr.name.lexeme, expr.object);
+    }
+
+    @Override
+    public String visitSetExpr(Expr.Set expr) {
+        return String.format("Set %s to %s", expr.name.lexeme, expr.object);
+    }
+
+    @Override
     public String visitBinaryExpr(Expr.Binary expr) {
         String left = expr.left.accept(this);
         String right = expr.right.accept(this);

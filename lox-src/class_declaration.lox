@@ -1,0 +1,17 @@
+class HelloLox {
+    greet() {
+        return "Hello, Lox!";
+    }
+    greetPerson(name) {
+        return "Hello, " + name + "!";
+    }
+
+    greetSelf() {
+        return "Hello, " + this.name + "!";
+    }
+}
+
+print HelloLox; // Prints "HelloLox" as a string.
+
+var greeter = HelloLox();
+print greeter.greetPerson("Sun Kit"); // Prints "HelloLox instance" as a string.
