@@ -17,6 +17,9 @@ class Math {
     }
 }
 
+var math = Math();
+print math.square(1000);
+
 print Math.square(2);
 print Math.abs(-100);
 print Math.abs(100);
