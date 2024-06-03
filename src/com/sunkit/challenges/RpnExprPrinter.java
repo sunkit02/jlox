@@ -40,6 +40,11 @@ public class RpnExprPrinter implements Expr.Visitor<String> {
     }
 
     @Override
+    public String visitThisExpr(Expr.This expr) {
+        return "this";
+    }
+
+    @Override
     public String visitBinaryExpr(Expr.Binary expr) {
         String left = expr.left.accept(this);
         String right = expr.right.accept(this);
