@@ -12,13 +12,13 @@ class Person {
     }
 
     greet(person) {
-        print "Hello, " + person.name + ", I am " + this.name + "!";
+        print "Hello, " + person.getName() + ", I am " + this.getName() + "!";
     }
 }
 
-var sunkit = Person("Sun Kit");
+var john = Person("John Smith");
+var emma = Person("Emma");
 
-var eunice = Person("Eunice");
-var greet = sunkit.greet;
-eunice.getName = sunkit.getName;
-print eunice.getName();
+john.greet(emma); // Expect: "Hello, Emma, I am John!"
+john.getName = emma.getName; // swap methods to test `this` binding
+john.greet(emma); // Expect: "Hello, Emma, I am Emma!" if the binding is correct
