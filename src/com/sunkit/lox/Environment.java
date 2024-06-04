@@ -61,4 +61,8 @@ public class Environment {
         throw new LoxRuntimeError(name, String.format("Undefined variable '%s'.", name.lexeme));
     }
 
+    public Environment getEnclosing() {
+        return enclosing;
+    }
+
 }

@@ -1,0 +1,26 @@
+class Doughnut {
+    init(price) {
+        this.price = price;
+    }
+
+    cook() {
+        print "Price: $" + this.price;
+        print "Fry until golden brown.";
+    }
+}
+
+class BostonCream < Doughnut {
+    init(name) {
+        super.init(name);
+    }
+
+    cook() {
+        super.cook();
+        print "Pipe full of custard and coat with chocolate.";
+    }
+}
+
+var doughnut = BostonCream(5.99);
+doughnut.cook();
+doughnut.init(3.23);
+doughnut.cook();
